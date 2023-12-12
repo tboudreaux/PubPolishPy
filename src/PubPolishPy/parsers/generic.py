@@ -5,11 +5,19 @@ from pathlib import Path
 
 from PubPolishPy.graph import traverse_tex_tree
 
+NODEFILTERS = [
+        "input",
+        "include",
+        "bibliography",
+        "documentclass",
+        "includegraphics",
+        ]
+
 class TeXProjectFormatter:
     def __init__(self, originator, basePath, force=False):
         self.iwd = os.getcwd()
         self.originator = originator
-        self.projectGraph = traverse_tex_tree(originator)
+        self.projectGraph = traverse_tex_tree(originator, NODEFILTERS)
         self._filerefs = dict()
         self.basePath = basePath
         
@@ -32,6 +40,7 @@ class TeXProjectFormatter:
             filename = os.path.basename(nodeName)
             newPath = os.path.join(self.basePath, filename)
             if not nodeData.get('tex', False):
+                print(nodeName, newPath)
                 self.smart_copy_file(nodeName, newPath)
             else:
                 with open(nodeName) as f:
@@ -47,12 +56,12 @@ class TeXProjectFormatter:
                     f.write(content)
                     
     @staticmethod
-    def smart_copy_file(src, dest):
+    def smart_copy_file(src, dest, case=False):
         src_path = Path(src)
         dest_path = Path(dest)
 
         if src_path.is_file():
-            dest_path.parent.mkdir(parents=True, exist_ok=True)  # Create destination directory if it doesn't exist
+            dest_path.parent.mkdir(parents=True, exist_ok=True)  
             dest_path.write_bytes(src_path.read_bytes())
             return
 
