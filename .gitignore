@@ -21,3 +21,4 @@ dist/
 tags
 .coverage
 *.log
+testFolder
