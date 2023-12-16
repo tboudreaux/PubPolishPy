@@ -75,13 +75,13 @@ Using progratically in python (based on the above example directory structure an
 from PubPolishPy.parsers import TeXApJFormatter
 
 ApJ = TeXApJFormatter("src/ms.tex")
-ApJ.flatten()
+ApJ.migrate()
 ```
 
 If you want to invoke it from the command line use the following script
 
 ```bash
-pubPolish --submission ApJ --dest ApJSubmission src/ms.tex
+pubPolish --target ApJ --dest ApJSubmission src/ms.tex
 ```
 Valid submission locations are defined in a dictionary which connects the key (ApJ in this case) to the class. The dest folder defines where the flattened project will end up. The script then runs effectivley the same code as is presented above
 

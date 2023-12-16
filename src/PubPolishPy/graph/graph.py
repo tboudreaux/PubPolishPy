@@ -20,7 +20,6 @@ def parse_and_add_nodes(file, g, nodeFilters):
     # Recursive calls for sub-nodes
     for nodeName in [x for x,y in g.nodes(data=True) if y['nodeType'] in ['input', 'include']]:
         if not g.nodes[nodeName]['complete'] and g.nodes[nodeName]['tex']:
-            print(f"Working in {nodeName}")
             parse_and_add_nodes(nodeName, g, nodeFilters)
 
 def traverse_tex_tree(file, nodeFilters):

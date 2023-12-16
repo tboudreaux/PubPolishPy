@@ -19,6 +19,6 @@ class TeXApJFormatter(TeXProjectFormatter):
             if os.path.exists(os.path.join(root, extra)):
                 shutil.copy2(os.path.join(root, extra), os.path.join(self.basePath, extra))
                 
-    def flatten(self):
-        super().flatten()
+    def migrate(self):
+        super().migrate()
         self.copy_additional()

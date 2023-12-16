@@ -31,3 +31,6 @@ Homepage = "https://github.com/tboudreaux/PubPolishPy"
 [tool.setuptools.dynamic]
 version = {attr = "PubPolishPy.__version__"}
 
+[project.scripts]
+pubPolish = "PubPolishPy.cli:cli_migrate"
+

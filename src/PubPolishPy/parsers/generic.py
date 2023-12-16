@@ -29,6 +29,9 @@ class TeXProjectFormatter:
                 raise OSError(f"Folder {basePath} exists!")
         else:
             os.makedirs(basePath)
+
+    def migrate(self):
+        self.flatten()
     
     def flatten(self):
         basePattern = lambda x: x
@@ -40,7 +43,6 @@ class TeXProjectFormatter:
             filename = os.path.basename(nodeName)
             newPath = os.path.join(self.basePath, filename)
             if not nodeData.get('tex', False):
-                print(nodeName, newPath)
                 self.smart_copy_file(nodeName, newPath)
             else:
                 with open(nodeName) as f:
@@ -56,22 +58,33 @@ class TeXProjectFormatter:
                     f.write(content)
                     
     @staticmethod
-    def smart_copy_file(src, dest, case=False):
+    def smart_copy_file(src, dest, case_sensitive=False):
+        """
+        TeX Live defaults to case insesitve file matching since 2018
+        So that is the default here.
+        """
         src_path = Path(src)
         dest_path = Path(dest)
 
         if src_path.is_file():
-            dest_path.parent.mkdir(parents=True, exist_ok=True)  
+            dest_path.parent.mkdir(parents=True, exist_ok=True)
             dest_path.write_bytes(src_path.read_bytes())
             return
 
-        regex_pattern = re.compile(re.escape(src_path.stem) + r'\..+')
-        possible_files = [f for f in src_path.parent.iterdir() if f.is_file() and regex_pattern.match(f.name)]
+        if case_sensitive:
+            regex_pattern = re.compile(re.escape(src_path.stem) + r'\..+')
+        else:
+            regex_pattern = re.compile(re.escape(src_path.stem) + r'\..+', re.IGNORECASE)
+        
+        possible_files = [f for f in src_path.parent.iterdir() if f.is_file() if regex_pattern.match(f.name)]
 
-        if possible_files:
-            dest_path.parent.mkdir(parents=True, exist_ok=True)  # Create destination directory if it doesn't exist
-            dest_file = dest_path.with_name(possible_files[0].name)  # Use the name of the found file for the destination
-            dest_file.write_bytes(possible_files[0].read_bytes())
+
+        if len(possible_files) > 0:
+            for matched_file in possible_files:
+                dest_path.parent.mkdir(parents=True, exist_ok=True)
+                dest_file = dest_path.with_name(matched_file.name)  # Preserve the original file case
+                dest_file.write_bytes(matched_file.read_bytes())
             return
 
         raise FileNotFoundError(f"No file found for {src}")
+
