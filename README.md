@@ -49,7 +49,7 @@ PubPolishPy aimes to resolve this challenfe.
 
 Currently, PubPolishPy recursivley parses your LaTex souce and builds a graoh of all of the local file dependencies it can find. These can be "flattened" into a directory structure. If you flatten them all the needed files will be copied from where there are to a new folder and all of the paths within the tex document will be updated to point there. Note, this is not an inplace operation. <b>NO CHANGES WILL BE MADE TO YOUR ORIGINAL TEX SOURCE</b>. Rather, effectlvley completely new tex project is built from your existing project but with a different structure.
 
-More Generally,PubPolishPy aims to provide a framework which destinations can be added into and can parse any tex project to any destination (such as MNRAS, ArXiV, ApJ, or other journals). This is done through the parsers module which impliments a generic parser which other parsers can inherit from. Currently only ApJ is implimented, though ArXiV will soon be implimented.
+More Generally,PubPolishPy aims to provide a framework which destinations can be added into and can parse any tex project to any destination (such as MNRAS, ArXiV, ApJ, or other journals). This is done through the parsers module which impliments a generic parser which other parsers can inherit from. Currently only ApJ and ArXiv are implimented.
 
 ## Installation
 PubPolishPy may be installed from source. I hope to have it in PyPy soon
