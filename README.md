@@ -85,3 +85,72 @@ pubPolish --target ApJ --dest ApJSubmission src/ms.tex
 ```
 Valid submission locations are defined in a dictionary which connects the key (ApJ in this case) to the class. The dest folder defines where the flattened project will end up. The script then runs effectivley the same code as is presented above
 
+
+## Example Makefile
+For sake of completion I have included a makefile which I use and includes PubPolishPy. Note the make rules for the arxiv and ApJ
+
+```make
+LTC="pdflatex"
+BTC="bibtex"
+
+ANAME="SelfConsistentModelingOfNGC2808"
+
+SRCDIR="src/"
+FIGDIR="src/figures"
+BIBDIR="src/bibliography"
+APEDIR="src/appendicies"
+
+ApJDIR="ApJ"
+ArXivDIR="ArXiv"
+
+MANFILE="ms.tex"
+MANPATH="$(SRCDIR)/$(MANFILE)"
+ApJMANPATH="$(ApJDIR)/$(MANFILE)"
+ArXivMANPATH="$(ArXivDIR)/$(MANFILE)"
+
+
+ASSET_FILES = $(shell find ./src/ -regex '.*\(tex\|pdf\)$')
+
+
+TFLAGS="-jobname=$(ANAME)"
+
+.PHONY: manuscript apj arxiv clean veryclean
+
+default: manuscript
+
+all: manuscrip apj arxiv
+
+manuscript: ./src/$(ASSET_FILES)
+        $(LTC) $(TFLAGS) $(MANPATH)
+        $(BTC) $(ANAME)
+        $(LTC) $(TFLAGS) $(MANPATH)
+        $(LTC) $(TFLAGS) $(MANPATH)
+
+
+apj:
+        if [ -d "ApJ" ]; then rm -rf "ApJ"; fi
+        pubPolish --target ApJ --dest $(ApJDIR) $(MANPATH)
+        cd $(ApJDIR) && $(LTC) $(TFLAGS) $(MANFILE)
+        cd $(ApJDIR) && $(BTC) $(ANAME)
+        cd $(ApJDIR) && $(LTC) $(TFLAGS) $(MANFILE)
+        cd $(ApJDIR) && $(LTC) $(TFLAGS) $(MANFILE)
+
+arxiv:
+        if [ -d "ArXiv" ]; then rm -rf "ArXiv"; fi
+        pubPolish --target ArXiv --dest $(ArXivDIR) $(MANPATH)
+        cd $(ArXivDIR) && $(LTC) $(TFLAGS) $(MANFILE)
+        cd $(ArXivDIR) && $(BTC) $(ANAME)
+        cd $(ArXivDIR) && $(LTC) $(TFLAGS) $(MANFILE)
+        cd $(ArXivDIR) && $(LTC) $(TFLAGS) $(MANFILE)
+
+
+clean:
+        -rm $(ANAME).blg
+        -rm $(ANAME).bbl
+        -rm $(ANAME).aux
+        -rm $(ANAME).log
+        -rm $(ANAME).out
+
+veryclean: clean
+        -rm $(ANAME).pdf
+```
