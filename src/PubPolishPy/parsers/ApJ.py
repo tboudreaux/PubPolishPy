@@ -5,7 +5,7 @@ from pathlib import Path
 from PubPolishPy.parsers import TeXProjectFormatter
 
 class TeXApJFormatter(TeXProjectFormatter):
-    def __init__(self, originator, basePath="ApJ", **kwargs):
+    def __init__(self, originator, basePath="ApJ", **kwargs,):
         super().__init__(originator, basePath, **kwargs)
     
     def copy_additional(self):
