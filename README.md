@@ -87,12 +87,11 @@ Valid submission locations are defined in a dictionary which connects the key (A
 
 ## Targets
 Currently there are only two targets implemented as these are the targets which I use. If and when I submit to other targets I will build them in, otherwise I am very open to others submitting targets; however, I likely will not work on them spontaneously.
+| Target                       | Command Line Key | Formatter Object Name | Details                                                                                                                                                     |
+| ---------------------------- | ---------------- | --------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| The Astrophysical Journal    | ApJ              | TeXApJFormatter       | Flattens the latex directory and copies additional AASTeX files                                                                                             |
+| The ArXiv                    | ArXiv            | TeXArXivFormatter     | Flattens the latex directory, copies additional AASTeX files if available, changes the acknowledgments environment to the macro, downloads the aastex62.cls file if aastex631 is detected, sets the document class options to twocolumn (removes other options if present). |
 
-
-| Target | Command Line Key | Formatter Object Name | Details |
-| --------------- | --------------- | --------------- | |
-| The Astrophysical Journal  | ApJ   | TeXApJFormatter   | Flattens the latex directory and copies additional AASTeX files |
-| The ArXiv | ArXiv   | TeXArXivFormatter   | Flattens the latex directory, copies additional AASTeX files if avalible, changes the acknowledgments enviroment to the macro, downloads the aastex62.cls file if aastex631 is detected, sets the document class options to twocolumn (removes other options if present).|
 
 
 ## Example Makefile
