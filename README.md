@@ -176,16 +176,16 @@ import re
 
 CustomPlugin(PubPolishPlugin):
     def post_migrate(self):
-        for nodeName, nodeData in self.projectGraph.nodes(data=True):
+        for nodeName, nodeData in self.formatter.projectGraph.nodes(data=True):
             if nodeData.get('tex', False) == True:
-                with open(self.updatedFilePaths[nodeName], 'r') as f:
+                with open(self.formatter.updatedFilePaths[nodeName], 'r') as f:
                     content = f.read()
                 newContent = re.sub('foo', 'bar', content)
-                with open(self.updatedFilePaths[nodeName], 'w') as f:
+                with open(self.formatter.updatedFilePaths[nodeName], 'w') as f:
                     f.write(newContent)
 
     def pre_migration(self):
-        self.flatten() # If using the generic formatter then there is no default mogration logic between pre and post.
+        self.formatter.flatten() # If using the generic formatter then there is no default mogration logic between pre and post.
         pass
 
 formatter = TeXGenericFormatter("src/main.tex")
