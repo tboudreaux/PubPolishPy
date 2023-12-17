@@ -9,7 +9,7 @@ authors = [
 	]
 description="Automatic Refactor for LaTeX documents for multiple submission."
 readme="README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.7"
 keywords=["LaTeX"]
 license = { file = "LICENSE" }
 classifiers = [
