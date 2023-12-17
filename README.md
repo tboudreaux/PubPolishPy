@@ -193,4 +193,4 @@ formatter.register_plugin(CustomPlugin)
 formatter.migrate()
 ```
 
-Within formatter (or any child classes) pre_migrate methods will be called before flatten while post_migrate methods will be called after flatten. For child classes other operations may happe 
+Within formatter (or any child classes) pre_migrate methods will be called before the migration_logic method which all child classes must impliment while post_migrate methods will be called after migration_logic. ApJ and ArXiv targets impliment migration logic; however, the generic formatter simply passes when migration logic is called allowing any migration logic at all to be written using a plugin. Note that since there is nothing happening between pre and post migration for the generic formatter their names become somewhat confusing. The Key point is that pre always runs first then migration_logic() then post.
