@@ -91,7 +91,7 @@ Currently there are only two targets implemented as these are the targets which 
 | ---------------------------- | ---------------- | --------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | The Astrophysical Journal    | ApJ              | TeXApJFormatter       | Flattens the latex directory and copies additional AASTeX files                                                                                             |
 | The ArXiv                    | ArXiv            | TeXArXivFormatter     | Flattens the latex directory, copies additional AASTeX files if available, changes the acknowledgments environment to the macro, downloads the aastex62.cls file if aastex631 is detected, sets the document class options to twocolumn (removes other options if present). |
-
+| Generic    | Generic              | TeXGenericFormatter       | Does not apply any additional logic.                                                                                             |
 
 
 ## Example Makefile
