@@ -1,3 +1,8 @@
+<h1 align="center"> PubPolishPy </h1>
+<p align="center">
+  <img src="https://github.com/tboudreaux/PubPolishPy/blob/master/assets/logo/PubPolishLogo-Dark.png?raw=true" alt="Logo of Project">
+</p>
+
 # A Python framework for reorganizing tex documents for submission to different sources
 Different destinations for TeX documents often require (implicitly or explicitly) different
 structures of a project. For example, I tend to organize all of my projects in the following structure
