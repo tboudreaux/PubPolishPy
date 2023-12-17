@@ -14,7 +14,7 @@ def cli_migrate():
     args = parser.parse_args()
 
     MAP = {
-            'generic': TeXProjectFormatter,
+            'Generic': TeXGenericFormatter,
             'ApJ': TeXApJFormatter,
             'ArXiv': TeXArXivFormatter,
             }
