@@ -4,6 +4,7 @@ import re
 from pathlib import Path
 
 from PubPolishPy.graph import traverse_tex_tree
+from PubPolishPy.plugins import PubPolishPlugin
 
 NODEFILTERS = [
         "input",
@@ -20,6 +21,7 @@ class TeXProjectFormatter:
         self.projectGraph = traverse_tex_tree(originator, NODEFILTERS)
         self._filerefs = dict()
         self.basePath = basePath
+        self.plugins = list()
         
         if os.path.exists(basePath):
             if force:
@@ -29,10 +31,22 @@ class TeXProjectFormatter:
                 raise OSError(f"Folder {basePath} exists!")
         else:
             os.makedirs(basePath)
+            
+    def register_plugin(self, plugin_class):
+        if not issubclass(plugin_class, PubPolishPlugin):
+            raise TypeError("Plugin must be a subclass of PubPolishPlugin")
+        plugin = plugin_class(self)
+        self.plugins.append(plugin)
 
     def migrate(self):
+        for plugin in self.plugins:
+            plugin.pre_migrate()
+
         self.flatten()
     
+        for plugin in self.plugins:
+            plugin.post_migrate()
+
     def flatten(self):
         basePattern = lambda x: x
         patterns = {
