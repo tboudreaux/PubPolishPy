@@ -119,8 +119,8 @@ class TeXArXivFormatter(TeXProjectFormatter):
             with open(rootPath, 'w') as file:
                 file.write(str(soup))
 
-    def migrate(self):
-        super().migrate()
+    def migration_logic(self):
+        self.flatten()
         self.copy_additional()
         self.updateDocumentClassOptions()
         self.replace_acknowledgements_with_macro()

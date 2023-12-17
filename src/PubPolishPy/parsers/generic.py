@@ -3,6 +3,8 @@ import os
 import re
 from pathlib import Path
 
+from abc import ABC, abstractmethod
+
 from PubPolishPy.graph import traverse_tex_tree
 from PubPolishPy.plugins import PubPolishPlugin
 
@@ -14,7 +16,8 @@ NODEFILTERS = [
         "includegraphics",
         ]
 
-class TeXProjectFormatter:
+
+class TeXProjectFormatter(ABC):
     def __init__(self, originator, basePath, force=False):
         self.iwd = os.getcwd()
         self.originator = originator
@@ -22,6 +25,7 @@ class TeXProjectFormatter:
         self._filerefs = dict()
         self.basePath = basePath
         self.plugins = list()
+        self.updatedFilePaths = dict()
         
         if os.path.exists(basePath):
             if force:
@@ -42,10 +46,14 @@ class TeXProjectFormatter:
         for plugin in self.plugins:
             plugin.pre_migrate()
 
-        self.flatten()
+        self.migration_logic()
     
         for plugin in self.plugins:
             plugin.post_migrate()
+
+    @abstractmethod
+    def migration_logic(self):
+        pass
 
     def flatten(self):
         basePattern = lambda x: x
@@ -61,16 +69,18 @@ class TeXProjectFormatter:
             else:
                 with open(nodeName) as f:
                     content = f.read()
-                newNodeName = os.path.join(self.basePath, os.path.basename(nodeName))
+                newPath = os.path.join(self.basePath, os.path.basename(nodeName))
                 edges = self.projectGraph.edges(nodeName)
                 for edge in edges:
                     destNodeType = self.projectGraph.nodes[edge[1]].get('node', None)
                     newFileName = os.path.basename(edge[1])
                     pattern = patterns.get(destNodeType, basePattern)(edge[1])
                     content = re.sub(pattern, newFileName, content)
-                with open(newNodeName, 'w') as f:
+                with open(newPath, 'w') as f:
                     f.write(content)
-                    
+            self.updatedFilePaths[nodeName] = newPath
+
+
     @staticmethod
     def smart_copy_file(src, dest, case_sensitive=False):
         """
@@ -102,3 +112,9 @@ class TeXProjectFormatter:
 
         raise FileNotFoundError(f"No file found for {src}")
 
+class TeXGenericFormatter(TeXProjectFormatter):
+    def __init__(self, originator, basePath="TeX_Project", **kwargs,):
+        super().__init__(originator, basePath, **kwargs)
+
+    def migration_logic(self):
+        pass

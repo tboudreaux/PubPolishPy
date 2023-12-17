@@ -162,3 +162,35 @@ clean:
 veryclean: clean
         -rm $(ANAME).pdf
 ```
+
+## Plugins
+Recognizing that every project is different and that it is infeasible for me to impliment a catch all system, PubPolishPy comes with a simple plugin system to allow users to define their own migration logic without diving into fully adding new target classes. 
+
+### Building a Plugin
+Let us say that for your project, you want to flatten the directory structure and then after you want to replace all instances of the word foo with the word bar in every tex file. Below I will write a plugin that does this
+
+```python
+from PubPolishPy.parsers import TeXGenericFormatter
+from PubPolishPy.plugins import PubPolishPlugin
+import re
+
+CustomPlugin(PubPolishPlugin):
+    def post_migrate(self):
+        for nodeName, nodeData in self.projectGraph.nodes(data=True):
+            if nodeData.get('tex', False) == True:
+                with open(self.updatedFilePaths[nodeName], 'r') as f:
+                    content = f.read()
+                newContent = re.sub('foo', 'bar', content)
+                with open(self.updatedFilePaths[nodeName], 'w') as f:
+                    f.write(newContent)
+
+    def pre_migration(self):
+        self.flatten() # If using the generic formatter then there is no default mogration logic between pre and post.
+        pass
+
+formatter = TeXGenericFormatter("src/main.tex")
+formatter.register_plugin(CustomPlugin)
+formatter.migrate()
+```
+
+Within formatter (or any child classes) pre_migrate methods will be called before flatten while post_migrate methods will be called after flatten. For child classes other operations may happe 
