@@ -20,8 +20,9 @@ NODEFILTERS = [
 class TeXProjectFormatter(ABC):
     def __init__(self, originator, basePath, force=False):
         self.iwd = os.getcwd()
-        self.originator = originator
-        self.projectGraph = traverse_tex_tree(originator, NODEFILTERS)
+        self.originator = os.path.basename(originator)
+        self.root = os.path.dirname(originator)
+        self.projectGraph = traverse_tex_tree(self.originator, NODEFILTERS, self.root)
         self._filerefs = dict()
         self.basePath = basePath
         self.plugins = list()
@@ -65,7 +66,9 @@ class TeXProjectFormatter(ABC):
             filename = os.path.basename(nodeName)
             newPath = os.path.join(self.basePath, filename)
             if not nodeData.get('tex', False):
-                self.smart_copy_file(nodeName, newPath)
+                print(f"coping {filename} to {newPath}")
+                validExtentions = [".bib"] if nodeData.get('nodeType', None) == 'bibliography' else None
+                self.smart_copy_file(nodeName, newPath, validExtentions=validExtentions)
             else:
                 with open(nodeName) as f:
                     content = f.read()
@@ -75,14 +78,16 @@ class TeXProjectFormatter(ABC):
                     destNodeType = self.projectGraph.nodes[edge[1]].get('node', None)
                     newFileName = os.path.basename(edge[1])
                     pattern = patterns.get(destNodeType, basePattern)(edge[1])
-                    content = re.sub(pattern, newFileName, content)
+                    nonRoot = os.path.relpath(pattern, self.root)
+                    content = re.sub(nonRoot, newFileName, content)
                 with open(newPath, 'w') as f:
+                    print("Writing to", newPath)
                     f.write(content)
             self.updatedFilePaths[nodeName] = newPath
 
 
     @staticmethod
-    def smart_copy_file(src, dest, case_sensitive=False):
+    def smart_copy_file(src, dest, case_sensitive=False, validExtentions=None):
         """
         TeX Live defaults to case insesitve file matching since 2018
         So that is the default here.
@@ -105,6 +110,9 @@ class TeXProjectFormatter(ABC):
 
         if len(possible_files) > 0:
             for matched_file in possible_files:
+                if validExtentions:
+                    if matched_file.suffix not in validExtentions:
+                        continue
                 dest_path.parent.mkdir(parents=True, exist_ok=True)
                 dest_file = dest_path.with_name(matched_file.name)  # Preserve the original file case
                 dest_file.write_bytes(matched_file.read_bytes())
