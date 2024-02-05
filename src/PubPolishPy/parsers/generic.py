@@ -66,11 +66,12 @@ class TeXProjectFormatter(ABC):
             filename = os.path.basename(nodeName)
             newPath = os.path.join(self.basePath, filename)
             if not nodeData.get('tex', False):
-                print(f"coping {filename} to {newPath}")
                 validExtentions = [".bib"] if nodeData.get('nodeType', None) == 'bibliography' else None
-                self.smart_copy_file(nodeName, newPath, validExtentions=validExtentions)
+                cFName = os.path.join(self.root, nodeName) if not nodeName.startswith(self.root) else nodeName
+                self.smart_copy_file(cFName, newPath, validExtentions=validExtentions)
             else:
-                with open(nodeName) as f:
+                oFName = os.path.join(self.root, nodeName) if not nodeName.startswith(self.root) else nodeName
+                with open(oFName) as f:
                     content = f.read()
                 newPath = os.path.join(self.basePath, os.path.basename(nodeName))
                 edges = self.projectGraph.edges(nodeName)
@@ -79,9 +80,8 @@ class TeXProjectFormatter(ABC):
                     newFileName = os.path.basename(edge[1])
                     pattern = patterns.get(destNodeType, basePattern)(edge[1])
                     nonRoot = os.path.relpath(pattern, self.root)
-                    content = re.sub(nonRoot, newFileName, content)
+                    content = re.sub(edge[1], newFileName, content)
                 with open(newPath, 'w') as f:
-                    print("Writing to", newPath)
                     f.write(content)
             self.updatedFilePaths[nodeName] = newPath
 
