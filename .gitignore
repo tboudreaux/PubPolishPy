@@ -21,4 +21,4 @@ dist/
 tags
 .coverage
 *.log
-testFolder
+testFolder*
